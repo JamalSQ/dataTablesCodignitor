@@ -9,9 +9,9 @@ let sortOrder = {
 
 async function sorting(variable){
 
-    const response = await fetch('js/products.json');
-        const products = await response.json();
-       
+    // const response = await fetch('js/products.json');
+        const products = paginate(records, currentPage, recordsPerPage);
+    
         if (sortOrder[variable] === 'asc') {
             // Ascending order sorting
             if (variable === "pname") {
@@ -98,14 +98,17 @@ function disply_search_result(results){
         // Fetch the JSON file containing the data
         const response = await fetch('js/products.json');
         const products = await response.json();
-
-        // Filter the products based on the search query
-        const results = products.filter(product => 
-            product.p_name.toLowerCase().includes(query.toLowerCase()) ||
-            product.p_price.toString().includes(query)
-        );
-
-        disply_search_result(results);
+        if(query==""){
+            const results=paginate(records, currentPage, recordsPerPage);
+            disply_search_result(results);
+        }else{
+            // Filter the products based on the search query
+            const results = products.filter(product => 
+                product.p_name.toLowerCase().includes(query.toLowerCase()) ||
+                product.p_price.toString().includes(query)
+            );
+            disply_search_result(results);
+        } 
     }
 
     // Add event listener to the search input field
@@ -145,7 +148,7 @@ function fetchdata(){
                     table.empty();
                     var products = response.data;
                     if (products.length > 0) {
-                        $.each(products, function(index, product) {
+                        $.each(products, function(index, product){
                             table.append(
                                 '<tr>' +
                                     '<td>' + product.id + '</td>' +

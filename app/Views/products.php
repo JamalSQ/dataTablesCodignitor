@@ -39,8 +39,13 @@
                 </form>
             </div>
             <div class="col-md-6 p-2">
-            <input type="search" name="search" autocomplete="off" id="searchInput" placeholder="Search..."><br><br>
-            <div id="searchResults"></div>
+            <input type="search" name="search" autocomplete="off" id="searchInput" placeholder="Search..."><br>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination m-4" id="pagination-controls">
+                
+                </ul>
+            </nav>
+          <br>
             <br>
                 <table class="table" id="myTable">
                     <thead>
@@ -101,8 +106,7 @@
 <!-- <script src="//cdn.datatables.net/2.1.4/js/dataTables.min.js"></script> -->
 
 <script src="<?= base_url('js/liveDataUsingAjax.js'); ?>"></script>
+<script src="<?= base_url('js/pagination.js'); ?>"></script>
 
-
- 
 </body>
 </html>
