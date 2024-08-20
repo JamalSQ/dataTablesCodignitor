@@ -17,21 +17,41 @@ class Home extends BaseController
     public $model;
     public function __construct()
     {
+
         $this->model = new productModel();
     }
 
-    public function index(): string
-    {
-        return view('products');
-    }
+    public function index(){
+   
+        $data['products']=$this->model->findAll();
+        return view('products', $data);
+}
+    
+    
+
     public function viewallproducts(){
         $data['products']=$this->model->findAll();
         return $data;
     }
 
+    public function updatefile(){
+        $filepath = FCPATH . 'js/products.json';
+            // Fetch data from the database
+            $data['products'] = $this->model->findAll();
+
+            // Write data to the file in JSON format
+            if ($file = fopen($filepath, 'w')) {
+                fwrite($file, json_encode($data['products'], JSON_PRETTY_PRINT));
+                fclose($file);
+                echo json_encode(["status"=>"success","message"=>"From database"]); 
+            } else {
+                // Handle error if the file cannot be opened
+                echo json_encode(["status"=>"success","message"=>"Error while opening file"]); 
+            }
+    }
     public function getAllProducts()
     { 
-        $data['products']=$this->model->findAll();
+        $data['products'] = $this->model->findAll();      
         echo json_encode(['data'=>$data['products']]); 
       
     }

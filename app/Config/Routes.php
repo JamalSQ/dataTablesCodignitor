@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
+$routes->get('/updatefile', 'Home::updatefile');
 $routes->get('/getAllProducts', 'Home::getAllProducts');
 $routes->post('/insertProducts', 'Home::insertData');
 $routes->post('/getsingleproduct', 'Home::getsingleproduct');

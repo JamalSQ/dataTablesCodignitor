@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD using AJAX</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+
+      <style>
       .title{
         filter: drop-shadow(6px 9px 4px gray);
+      }
+      .columName{
+        cursor: pointer;
       }
     </style>
 </head>
@@ -33,17 +38,21 @@
                   <p id="msg" style="z-index:999;" class="alert"></p>
                 </form>
             </div>
-            <div class="col-md-6 bg-light p-2">
-                <table class="table table-striped">
+            <div class="col-md-6 p-2">
+            <input type="search" name="search" autocomplete="off" id="searchInput" placeholder="Search..."><br><br>
+            <div id="searchResults"></div>
+            <br>
+                <table class="table" id="myTable">
                     <thead>
                       <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">price</th>
-                        <th colspan="2">Actions</th>
+                      <th scope="col" class="columName" onclick="sorting('id')">ID</th>
+                      <th scope="col" class="columName" onclick="sorting('pname')">Name</th>
+                      <th scope="col" class="columName" onclick="sorting('pprice')">Price</th>
+                        <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody id="tablebody">
+                   
                     </tbody>
                   </table>
             </div>
@@ -58,8 +67,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-center" id="exampleModalLongTitle">Update Product</h5>
-        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
-          <!-- <span aria-hidden="true">&times;</span> -->
+        
         </button>
       </div>
       <div class="modal-body">
@@ -84,227 +92,17 @@
   </div>
 </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-   <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+
+<!-- 
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script> -->
+<!-- <script src="//cdn.datatables.net/2.1.4/js/dataTables.min.js"></script> -->
+
+<script src="<?= base_url('js/liveDataUsingAjax.js'); ?>"></script>
+
+
  
- <script>
-    fetchdata();
-// For fetching the record from the database
-function fetchdata(){
-            $.ajax({
-                url: '/getAllProducts',
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {                   
-                    var table = $('#tablebody');
-                    table.empty();
-                    var products = response.data;
-                    if (products.length > 0) {
-                        $.each(products, function(index, product) {
-                            table.append(
-                                '<tr>' +
-                                    '<td>' + product.id + '</td>' +
-                                    '<td>' + product.p_name + '</td>' +
-                                    '<td>' + product.p_price + '</td>' +
-                                    '<td><button type="button" class="btn btn-primary" onclick="fetchdataOnID(' + product.id + ')" data-toggle="modal" data-target="#exampleModalCenter">Edit</button></td>' +
-                                    '<td><button type="button" class="btn btn-danger" onclick="deleteproduct(' + product.id + ')">Delete</button></td>' +
-                                '</tr>'
-                            );
-                        });
-                    } else {
-                        table.append('<tr><td colspan="5">No data found</td></tr>');
-                    }
-                }
-            });
-        }
-
-        // Delete a specific record based on id
-    function deleteproduct(id) {
-      $.ajax({
-        url:"/deleteSingleProduct",
-        method:"POST",
-        data:{
-            id:id
-        },
-        dataType:'json',
-        success:function(deletedata){
-          if(deletedata.status==='success'){
-            $('#msg').html(deletedata.message)
-                        .css({
-                            backgroundColor: 'green',
-                            color: 'white'
-                        })
-                        .slideDown()
-                        .delay(1000)
-                        .slideUp();
-                        fetchdata();
-          }else{
-            $('#msg').html(deletedata.error)
-                        .css({
-                            backgroundColor: 'red',
-                            color: 'white'
-                        })
-                        .slideDown()
-                        .delay(1000)
-                        .slideUp();
-          }
-        }
-      });
-    }
-
-
-          
-// Display data in the pop up dialog box for updation, so fetching the data based on the id
-
-function fetchdataOnID(id){
-  var id=id;
-  if(id==""){
-    $('#msg').html("Id does not found")
-                        .css({
-                            backgroundColor: 'red',
-                            color: 'white'
-                        })
-                        .slideDown()
-                        .delay(1000)
-                        .slideUp();
-                        fetchdata();
-  }
-  $.ajax({
-        url:"getsingleproduct",
-        method:"POST",
-        data:{
-          id:id
-        },
-        dataType:'json',
-        success:function(responce){
-            var data=responce.data
-          $("#upid").val(data.id);
-          $("#upname").val(data.p_name);
-          $("#upprice").val(data.p_price);
-        }
-  });
-}
-
-// update products 
-
-function updateData(){
-        var pname = $('#upname').val();
-        var pprice = $('#upprice').val();
-        var id = $('#upid').val();
-        if (pname === "" || pprice === "") {
-          $('#msg').html("Fill all the fields")
-    .css({
-        backgroundColor: 'red',
-        color: 'white'
-    })
-    .slideDown()
-    .delay(1000)
-    .slideUp();
-        } else {
-            $.ajax({
-                url: 'updateProducts', // Ensure this path is correct
-                method: 'POST',
-                data: {
-                    id:id,
-                    pname: pname,
-                    pprice: pprice
-                },
-                dataType: 'json',
-                cache: false,
-                success: function(response) {
-                    console.log(response)
-                    if (response.status === 'success') {
-                      
-                        $('#msg').html(response.message)
-                        .css({
-                            backgroundColor: 'green',
-                            color: 'white'
-                        })
-                        .slideDown()
-                        .delay(1000)
-                        .slideUp();
-                        $('#pname').val('');
-                        $('#pprice').val('');
-                        fetchdata();
-                    } else {
-                      $('#msg').html(response.message)
-                      .css({
-                          backgroundColor: 'red',
-                          color: 'white'
-                      })
-                      .slideDown()
-                      .delay(1000)
-                      .slideUp();
-                    }
-                }
-              })
-        }
-      }
-
-$(document).ready(function() {
-
-// Inserting data 
-
-$('#productForm').on('submit', function(event) {
-        event.preventDefault();
-        var pname = $('#pname').val();
-        var pprice = $('#pprice').val();
-
-        if (pname === "" || pprice === "") {
-          $('#msg').html("Fill all the fields")
-    .css({
-        backgroundColor: 'red',
-        color: 'white'
-    })
-    .slideDown()
-    .delay(1000)
-    .slideUp();
-        } else {
-            $.ajax({
-                url: 'insertProducts', // Ensure this path is correct
-                method: 'POST',
-                data: {
-                    pname: pname,
-                    pprice: pprice
-                },
-                dataType: 'json',
-                cache: false, // Prevent caching
-                success: function(response) {
-                    if (response.status === 'success') {
-                      
-                        $('#msg').html(response.message)
-                        .css({
-                            backgroundColor: 'green',
-                            color: 'white'
-                        })
-                        .slideDown()
-                        .delay(1000)
-                        .slideUp();
-                        $('#pname').val('');
-                        $('#pprice').val('');
-                        fetchdata();
-                    } else {
-                      $('#msg').html(response.message)
-                      .css({
-                          backgroundColor: 'red',
-                          color: 'white'
-                      })
-                      .slideDown()
-                      .delay(1000)
-                      .slideUp();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    $('#msg').html('An error occurred: ' + error).fadeIn().delay(5000).fadeOut();
-                    console.error('AJAX Error:', status, error);
-                }
-            });
-        }
-    });
-
-});
-</script>
 </body>
 </html>
