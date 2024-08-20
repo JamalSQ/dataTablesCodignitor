@@ -9,7 +9,8 @@ let sortOrder = {
 
 async function sorting(variable){
 
-    // const response = await fetch('js/products.json');
+        const response = await fetch('js/products.json'); // Load the JSON data
+        records = await response.json(); 
         const products = paginate(records, currentPage, recordsPerPage);
     
         if (sortOrder[variable] === 'asc') {
@@ -143,7 +144,8 @@ function fetchdata(){
                 url: '/getAllProducts',
                 method: 'GET',
                 dataType: 'json',
-                success: function(response) {                   
+                success: function(response) {   
+                    console.log(response);                
                     var table = $('#tablebody');
                     table.empty();
                     var products = response.data;
@@ -257,6 +259,7 @@ function updateData(){
                 .delay(1000)
                 .slideUp();
             }else{
+                console.log(pname+'  '+pprice);
             $.ajax({
                 url: 'updateProducts', // Ensure this path is correct
                 method: 'POST',
@@ -269,7 +272,6 @@ function updateData(){
                 cache: false,
                 success: function(response) {
                     if (response.status === 'success') {
-                      
                         $('#msg').html(response.message)
                         .css({
                             backgroundColor: 'green',

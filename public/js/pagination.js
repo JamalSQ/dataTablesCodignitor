@@ -35,8 +35,7 @@ function renderRecords(records) {
             <td>${record.id}</td>
             <td>${record.p_name}</td>
             <td>${record.p_price}</td>
-            <td><button type="button" class="btn btn-primary" onclick="fetchdataOnID() data-toggle="modal" data-target="#exampleModalCenter">Edit</button></td>
-            <td><button type="button" class="btn btn-danger" onclick="deleteproduct()">Delete</button></td>
+            <td><button type="button" class="btn btn-primary" onclick="fetchdataOnID(${record.id})" data-toggle="modal" data-target="#exampleModalCenter">Edit</button>  <button type="button" class="btn btn-danger" onclick="deleteproduct(${record.id})">Delete</button></td>
         </tr>`;
         tableBody.innerHTML += row;
     });

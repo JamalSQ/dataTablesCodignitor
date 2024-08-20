@@ -108,5 +108,7 @@
 <script src="<?= base_url('js/liveDataUsingAjax.js'); ?>"></script>
 <script src="<?= base_url('js/pagination.js'); ?>"></script>
 
+
+
 </body>
 </html>
